@@ -33,9 +33,6 @@ public class Colores {
         Matrix inputs = new Matrix(inputData);
         Matrix weights = new Matrix(weightData);
 
-
-        System.out.println("Los renglones son: " + weights.getRows());
-
         double learningRate = 0.7;
         double momentum = 0.3;
 
@@ -172,7 +169,7 @@ public class Colores {
 
             System.out.println("Epoca " + epoca + " Error: " + MSE);
 
-        } while(epoca <= epocas || MSE > error);
+        } while(epoca < epocas || MSE > error);
 
         System.out.println("Resultados Red Neuronal");
         System.out.println("Número de épocas: " + epoca);
@@ -211,6 +208,25 @@ public class Colores {
 
         }
 
+
+        System.out.println("**Resultados con pesos nuevos**");
+        System.out.println("A\tB\tC ");
+        for (int i = 0; i < inputs.getRows(); i++){
+
+            H1Actual[i] = RNA_H1(inputs.getRow(i), weights.getRow(0));
+            H2Actual[i] = RNA_H2(inputs.getRow(i), weights.getRow(1));
+            H3Actual[i] = RNA_H3(inputs.getRow(i), weights.getRow(2));
+            coloresActual[i] = RNA_O1(inputs.getRow(i), weights);
+
+            System.out.println(
+                    ((int) inputs.get(i, 0)) +
+                    "\t" + ((int) inputs.get(i, 1)) +
+                    "\t" + ((int) inputs.get(i,2)) +
+                    "\tActual= " + RNA_O1(inputs.getRow(i), weights) +
+                    ",\tIdeal= " + coloresIdeal[i]
+            );
+
+        }
 
     }
 
