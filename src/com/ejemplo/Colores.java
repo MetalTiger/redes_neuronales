@@ -191,20 +191,28 @@ public class Colores {
         System.out.println("**Matriz de Pesos Final**");
         for (int i = 0; i < weights.getRows(); i++){
 
+            System.out.print("{");
+
             for (int j = 0 ; j < weights.getCols(); j++){
 
-                System.out.print(weights.get(i, j) + ", ");
+                if (j == (weights.getCols() - 1)){
+
+                    System.out.print(weights.get(i, j));
+
+                }else{
+
+                    System.out.print(weights.get(i, j) + ", ");
+
+                }
 
             }
 
-            System.out.print("\n");
+            System.out.print("},\n");
 
         }
 
 
-
     }
-
 
     private static double[] colorErrors(double[] actual, double[] ideal){
 
