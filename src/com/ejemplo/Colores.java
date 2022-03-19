@@ -198,7 +198,7 @@ public class Colores {
 
                 }else{
 
-                    System.out.print(weights.get(i, j) + ", ");
+                    System.out.print(weights.get(i, j) + ",");
 
                 }
 
@@ -219,9 +219,9 @@ public class Colores {
             coloresActual[i] = RNA_O1(inputs.getRow(i), weights);
 
             System.out.println(
-                    ((int) inputs.get(i, 0)) +
-                    "\t" + ((int) inputs.get(i, 1)) +
-                    "\t" + ((int) inputs.get(i,2)) +
+                    inputs.get(i, 0) +
+                    "\t" + inputs.get(i, 1) +
+                    "\t" + inputs.get(i,2) +
                     "\tActual= " + RNA_O1(inputs.getRow(i), weights) +
                     ",\tIdeal= " + coloresIdeal[i]
             );
