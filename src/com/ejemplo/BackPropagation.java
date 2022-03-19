@@ -15,22 +15,24 @@ public class BackPropagation {
     public static void main(String[] args) {
 
         double[][] inputData = {
-                {1, 1, 1},
-                {1, 0, 1},
-                {0, 1, 1},
-                {0, 0, 1}
+                {0.8, -0.2, 1},
+                {0.7, 0.005, 1},
+                {1, 0.2, 1},
+                {0.21, 0.43, 1},
+                {-0.76, 0.55, 1},
+                {0.12, -0.32, 1}
         };
 
         double[][] weightData = {
-                {-0.07, 0.22, -0.46},
-                {0.94, 0.46, 0.1},
-                {-0.22, 0.58, 0.78}
+                {0.4, 0.2, 0.01},
+                {0.1, 0.3, -0.5},
+                {-0.2, -0.8, 0.72},
         };
 
         Matrix inputs = new Matrix(inputData);
         Matrix weights = new Matrix(weightData);
 
-        double learningRate = 0.7;
+        double learningRate = 0.8;
         double momentum = 0.3;
 
         /*double hiddenNeurons = 2;
@@ -63,13 +65,13 @@ public class BackPropagation {
         }
 
         double[] andIdeal = {1, 0, 0, 0};
-        double[] andActual = new double[4];
+        double[] andActual = new double[inputs.getRows()];
 
         double[] orIdeal = {1, 1, 1, 0};
-        double[] orActual = new double[4];
+        double[] orActual = new double[inputs.getRows()];
 
-        double[] xorIdeal = {0, 1, 1, 0};
-        double[] xorActual = new double[4];
+        double[] xorIdeal = {1, 1, 1, 0, 0, 0};
+        double[] xorActual = new double[inputs.getRows()];
 
         double MSE;
 
@@ -150,7 +152,7 @@ public class BackPropagation {
 
             System.out.println("Epoca " + epoca + " Error: " + MSE);
 
-        } while(epoca <= epocas || MSE > error);
+        } while(epoca < epocas || MSE > error);
 
         System.out.println("Resultados Red Neuronal");
         System.out.println("Número de épocas: " + epoca);
@@ -175,6 +177,21 @@ public class BackPropagation {
             }
 
             System.out.print("\n");
+
+        }
+
+        System.out.println("\n**Resultados con pesos nuevos**");
+        for (int i = 0; i < inputs.getRows(); i++){
+
+            andActual[i] = RNA_AND(inputs.getRow(i), weights.getRow(0));
+            orActual[i] = RNA_OR(inputs.getRow(i), weights.getRow(1));
+            xorActual[i] = RNA_XOR(inputs.getRow(i), weights);
+
+            System.out.println(
+                inputs.get(i, 0) +
+                "\t" + inputs.get(i, 1) +
+                "\t" + (RNA_XOR(inputs.getRow(i), weights) > 0.9 ? "Es un melon." : "Es una manzana.")
+            );
 
         }
 
