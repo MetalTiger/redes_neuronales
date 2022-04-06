@@ -261,10 +261,34 @@ public class FeedforwardLayer implements Serializable {
      */
     public void reset() {
 
-        if (this.matrix != null) {
-            this.matrix.ramdomize(-1, 1);
+        if (this.matrix != null){
+
+            if (this.isInput()){
+
+                this.matrix.set(0,0, 0.4);
+                this.matrix.set(0,1, 0.1);
+
+                this.matrix.set(1,0, 0.2);
+                this.matrix.set(1,1, 0.3);
+
+                this.matrix.set(2,0, 0.01);
+                this.matrix.set(2,1, -0.5);
+
+            }else{
+
+                this.matrix.set(0,0, -0.2);
+                this.matrix.set(1,0, -0.8);
+                this.matrix.set(2,0, 0.72);
+
+            }
+
 
         }
+
+        /*if (this.matrix != null) {
+            this.matrix.ramdomize(-1, 1);
+
+        }*/
 
     }
 

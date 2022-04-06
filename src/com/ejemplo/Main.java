@@ -91,17 +91,7 @@ public class Main {
         //patternMatch();
         //Hopfield_NA();
 
-        /*List<String> lista = new ArrayList<String>(){
-            {
-                add("asd");
-                add("asd");
-                add("3");
-
-            }
-
-        };
-
-        String a = "el, asd, hace. asd";
+        /*String a = "el, asd, hace. asd";
 
         a = a.toLowerCase(Locale.ROOT).replaceAll("[^a-zA-Z]", " ");
 
@@ -117,22 +107,31 @@ public class Main {
 
         Map<String, Integer> mapa = new HashMap<String, Integer>();
 
-        for (String elemento: lista) {
+        List<String> lista = new ArrayList<String>(){
+            {
+                add("asd");
+                add("asd");
+                add("3");
 
-            if (!mapa.containsKey(elemento)){
+            }
+        };
 
-                mapa.put(elemento, 1);
+        for (String element: lista) {
+
+            if (!mapa.containsKey(element)){
+
+                mapa.put(element, 1);
 
             }else{
 
-                mapa.put(elemento, mapa.get(elemento) + 1);
+                mapa.put(element, mapa.get(element) + 1);
 
             }
 
         }
 
         for (int i = 0; i < lista.size(); i++){
-            if (!mapa.containsKey(lista.get(i))){
+            if (!mapa.containsKey(lista.get(i)) ){
 
                 mapa.put(lista.get(i), 1);
 
@@ -144,8 +143,7 @@ public class Main {
 
         }
 
-        System.out.println(mapa);
-*/
+        System.out.println(mapa);*/
 
     }
 
@@ -303,7 +301,7 @@ public class Main {
         double[] inputData = new double[cadena.length()];
         double[] inputBiData = new double[cadena.length()];
 
-        System.out.println("asdasd" + inputBiData.toString());
+        //System.out.println("asdasd " + inputBiData.toString());
 
 
         // Paso 1.- Convertir a Bipolar

@@ -100,7 +100,7 @@ public class FeedforwardNetwork {
 
         }
 
-        return (errorCalculation.calculateRMS());
+        return (errorCalculation.calculateMSE());
     }
 
     /**
