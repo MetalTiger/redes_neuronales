@@ -3,6 +3,7 @@ package com.ch6.XOR;
 import neural.feedforward.FeedforwardLayer;
 import neural.feedforward.FeedforwardNetwork;
 import neural.feedforward.train.genetic.TrainingSetNeuralGeneticAlgorithm;
+import neural.matrix.Matrix;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -19,16 +20,20 @@ import java.time.Instant;
 public class GeneticXOR {
 
     public static double[][] XOR_INPUT = {
-            { 1.0, 1.0 },
-            { 1.0, 0.0 },
-            { 0.0, 1.0 },
-            { 0.0, 0.0 }
+            { 0.8, -0.2 },
+            { 0.7, 0.005 },
+            { 1, 0.2 },
+            { 0.21, 0.43 },
+            { -0.76, 0.55 },
+            { 0.12, -0.32 },
     };
 
     public static double[][] XOR_IDEAL = {
+            { 1.0 },
+            { 1.0 },
+            { 1.0 },
             { 0.0 },
-            { 1.0 },
-            { 1.0 },
+            { 0.0 },
             { 0.0 }
     };
 
@@ -67,12 +72,36 @@ public class GeneticXOR {
 
         network = train.getNetwork();
 
+        System.out.println("Neural Network Weights");
+
+        for (FeedforwardLayer layer: network.getLayers()) {
+
+            Matrix a = layer.getMatrix();
+
+            if (a != null){
+
+                for (double peso: a.toPackedArray()) {
+
+                    System.out.print(peso + ", ");
+
+                }
+
+            }
+
+            System.out.println();
+
+        }
+
         // test the neural network
         System.out.println("Neural Network Results:");
         for (int i = 0; i < XOR_IDEAL.length; i++) {
+
             final double[] actual = network.computeOutputs(XOR_INPUT[i]);
+
             System.out.println(XOR_INPUT[i][0] + "," + XOR_INPUT[i][1]
-                    + ", actual=" + actual[0] + ",ideal=" + XOR_IDEAL[i][0]);
+                    + ", actual=" + actual[0] + ",ideal=" + XOR_IDEAL[i][0]
+            );
+
         }
     }
 }

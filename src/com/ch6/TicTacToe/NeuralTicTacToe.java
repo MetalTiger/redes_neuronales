@@ -97,7 +97,7 @@ public class NeuralTicTacToe {
 
             final NeuralTicTacToe ttt = new NeuralTicTacToe();
 
-            String[] parametros = {"Train", "NeuralBlank", "Random"};
+            String[] parametros = {"match", "human", "Random"};
 
             /*
             if (args.length < 3) {

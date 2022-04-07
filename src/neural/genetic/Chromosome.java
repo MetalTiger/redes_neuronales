@@ -62,11 +62,7 @@ abstract public class Chromosome<GENE_TYPE, GA_TYPE extends GeneticAlgorithm<?>>
      *         than this chromosome.
      */
     public int compareTo(final Chromosome<GENE_TYPE, GA_TYPE> other) {
-        if (getCost() > other.getCost()) {
-            return 1;
-        } else {
-            return -1;
-        }
+        return Double.compare(getCost(), other.getCost());
     }
 
     /**

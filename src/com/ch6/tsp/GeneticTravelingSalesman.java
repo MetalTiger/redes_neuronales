@@ -102,7 +102,7 @@ public class GeneticTravelingSalesman extends JFrame implements Runnable,
      */
     public GeneticTravelingSalesman() {
         addComponentListener(this);
-        setSize(300, 300);
+        setSize(400, 350);
         setTitle("Traveling Salesman Problem");
     }
 

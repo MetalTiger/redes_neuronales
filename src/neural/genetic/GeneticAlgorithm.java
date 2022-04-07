@@ -263,17 +263,25 @@ abstract public class GeneticAlgorithm<CHROMOSOME_TYPE extends Chromosome<?, ?>>
         this.preventRepeat = preventRepeat;
     }
 
-    @SuppressWarnings("unchecked")
     public void sortChromosomes() {
 
         try {
+
+            //Arrays.sort(this.chromosomes);
+
+            //Arrays.sort(this.chromosomes, null); // Mejor método
+
+            //Arrays.parallelSort(this.chromosomes);
+
+            List<CHROMOSOME_TYPE> tempChromosomes = Arrays.asList(this.chromosomes);
+            Collections.shuffle(tempChromosomes);
+            tempChromosomes.toArray(this.chromosomes);
 
             Arrays.sort(this.chromosomes);
 
         }catch (IllegalArgumentException e) {
 
             System.out.println(e.getMessage());
-//            System.out.println(e.toString());
 
         }
 
