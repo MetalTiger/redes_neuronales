@@ -1,5 +1,6 @@
 package neural.feedforward;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -23,7 +24,7 @@ import neural.util.ErrorCalculation;
  * @author Jeff Heaton
  * @version 2.1
  */
-public class FeedforwardNetwork {
+public class FeedforwardNetwork implements Serializable {
 
     /**
      * The input layer.
