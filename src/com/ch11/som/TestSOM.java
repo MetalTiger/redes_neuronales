@@ -53,6 +53,7 @@ public class TestSOM extends JFrame implements Runnable {
      *            Not used.
      */
     public static void main(final String[] args) {
+
         final TestSOM app = new TestSOM();
         app.setVisible(true);
         final Thread t = new Thread(app);
@@ -99,10 +100,15 @@ public class TestSOM extends JFrame implements Runnable {
     TestSOM() {
         setTitle("Training a Self Organizing Map Neural Network");
         setSize(400, 450);
+
         final Toolkit toolkit = Toolkit.getDefaultToolkit();
         final Dimension d = toolkit.getScreenSize();
-        setLocation((int) (d.width - this.getSize().getWidth()) / 2,
-                (int) (d.height - this.getSize().getHeight()) / 2);
+
+        setLocation(
+                (int) (d.width - this.getSize().getWidth()) / 2,
+                (int) (d.height - this.getSize().getHeight()) / 2
+        );
+
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
     }
@@ -115,13 +121,22 @@ public class TestSOM extends JFrame implements Runnable {
      */
     @Override
     public void paint(Graphics g) {
+
         if (this.net == null) {
+
             return;
+
         }
+
         if (this.offScreen == null) {
-            this.offScreen = this.createImage((int) getBounds().getWidth(),
-                    (int) getBounds().getHeight());
+
+            this.offScreen = this.createImage(
+                    (int) getBounds().getWidth(),
+                    (int) getBounds().getHeight()
+            );
+
         }
+
         g = this.offScreen.getGraphics();
         final int width = getContentPane().getWidth();
         final int height = getContentPane().getHeight();
@@ -135,15 +150,22 @@ public class TestSOM extends JFrame implements Runnable {
 
         for (int y = 0; y < outputWeights.getRows(); y++) {
 
-            g.fillRect((int) (outputWeights.get(y, 0) * this.unitLength),
-                    (int) (outputWeights.get(y, 1) * this.unitLength), 10, 10);
+            g.fillRect(
+                    (int) (outputWeights.get(y, 0) * this.unitLength),
+                    (int) (outputWeights.get(y, 1) * this.unitLength),
+                    10,
+                    10
+
+            );
 
         }
 
         // plot a grid of samples to test the net with
         g.setColor(Color.green);
         for (int y = 0; y < this.unitLength; y += 50) {
+
             for (int x = 0; x < this.unitLength; x += 50) {
+
                 g.fillOval(x, y, 5, 5);
                 final double[] d = new double[2];
                 d[0] = x;
@@ -155,6 +177,7 @@ public class TestSOM extends JFrame implements Runnable {
                 final int y2 = (int) (outputWeights.get(c, 1) * this.unitLength);
 
                 g.drawLine(x, y, x2, y2);
+
             }
 
         }
@@ -164,10 +187,14 @@ public class TestSOM extends JFrame implements Runnable {
         final NumberFormat nf = NumberFormat.getInstance();
         nf.setMaximumFractionDigits(2);
         nf.setMinimumFractionDigits(2);
+
         g.drawString("retry = " + this.retry + ",current error = "
                         + nf.format(this.totalError * 100) + "%, best error = "
-                        + nf.format(this.bestError * 100) + "%", 0,
-                (int) getContentPane().getBounds().getHeight());
+                        + nf.format(this.bestError * 100) + "%",
+                0,
+                (int) getContentPane().getBounds().getHeight()
+        );
+
         getContentPane().getGraphics().drawImage(this.offScreen, 0, 0, this);
 
     }
@@ -181,21 +208,28 @@ public class TestSOM extends JFrame implements Runnable {
         this.input = new double[SAMPLE_COUNT][INPUT_COUNT];
 
         for (int i = 0; i < SAMPLE_COUNT; i++) {
+
             for (int j = 0; j < INPUT_COUNT; j++) {
+
                 this.input[i][j] = Math.random();
+
             }
+
         }
 
         // build and train the neural network
-        this.net = new SelfOrganizingMap(INPUT_COUNT, OUTPUT_COUNT,
-                NormalizationType.MULTIPLICATIVE);
+        this.net = new SelfOrganizingMap(INPUT_COUNT, OUTPUT_COUNT, NormalizationType.MULTIPLICATIVE);
+
         final TrainSelfOrganizingMap train = new TrainSelfOrganizingMap(
-                this.net, this.input,LearningMethod.SUBTRACTIVE,0.5);
+                this.net, this.input,LearningMethod.SUBTRACTIVE,0.5
+        );
+
         train.initialize();
         double lastError = Double.MAX_VALUE;
         int errorCount = 0;
 
         while (errorCount < 10) {
+
             train.iteration();
             this.retry++;
             this.totalError = train.getTotalError();
@@ -203,12 +237,18 @@ public class TestSOM extends JFrame implements Runnable {
             paint(getGraphics());
 
             if (this.bestError < lastError) {
+
                 lastError = this.bestError;
                 errorCount = 0;
+
             } else {
+
                 errorCount++;
+
             }
+
         }
+
     }
 
 }

@@ -62,11 +62,14 @@ public class NormalizeInput {
      *            The synthetic input.
      * @return A matrix that contains the input pattern and the synthetic input.
      */
-    protected Matrix createInputMatrix(final double[] pattern,
-                                       final double extra) {
+    protected Matrix createInputMatrix(final double[] pattern, final double extra) {
+
         final Matrix result = new Matrix(1, pattern.length + 1);
+
         for (int i = 0; i < pattern.length; i++) {
+
             result.set(0, i, pattern[i]);
+
         }
 
         result.set(0, pattern.length, extra);
@@ -113,16 +116,24 @@ public class NormalizeInput {
         final int numInputs = input.length;
 
         if (this.type == NormalizationType.MULTIPLICATIVE) {
+
             this.normfac = 1.0 / len;
             this.synth = 0.0;
+
         } else {
+
             this.normfac = 1.0 / Math.sqrt(numInputs);
             final double d = numInputs - Math.pow(len,2);
             if (d > 0.0) {
+
                 this.synth = Math.sqrt(d) * this.normfac;
+
             } else {
+
                 this.synth = 0;
+
             }
+
         }
     }
 

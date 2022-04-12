@@ -48,15 +48,14 @@ public class SelfOrganizingMap implements Serializable {
      * @param normalizationType
      *            The normalization type to use.
      */
-    public SelfOrganizingMap(final int inputCount, final int outputCount,
-                             final NormalizationType normalizationType) {
+    public SelfOrganizingMap(final int inputCount, final int outputCount, final NormalizationType normalizationType) {
 
         this.inputNeuronCount = inputCount;
         this.outputNeuronCount = outputCount;
-        this.outputWeights = new Matrix(this.outputNeuronCount,
-                this.inputNeuronCount + 1);
+        this.outputWeights = new Matrix(this.outputNeuronCount, this.inputNeuronCount + 1);
         this.output = new double[this.outputNeuronCount];
         this.normalizationType = normalizationType;
+
     }
 
     /**
@@ -116,8 +115,9 @@ public class SelfOrganizingMap implements Serializable {
      * @return The winning neuron.
      */
     public int winner(final double[] input) {
-        final NormalizeInput normalizedInput = new NormalizeInput(input,
-                this.normalizationType);
+
+        final NormalizeInput normalizedInput = new NormalizeInput(input, this.normalizationType);
+
         return winner(normalizedInput);
     }
 
@@ -132,25 +132,31 @@ public class SelfOrganizingMap implements Serializable {
 
         double biggest = Double.MIN_VALUE;
         for (int i = 0; i < this.outputNeuronCount; i++) {
-            final Matrix optr = this.outputWeights.getRow(i);
-            this.output[i] = MatrixMath
-                    .dotProduct(input.getInputMatrix(), optr)
-                    * input.getNormfac();
 
-            this.output[i] = (this.output[i]+1.0)/2.0;
+            final Matrix optr = this.outputWeights.getRow(i);
+            this.output[i] = MatrixMath.dotProduct(input.getInputMatrix(), optr) * input.getNormfac();
+
+            this.output[i] = (this.output[i] + 1.0) / 2.0;
 
             if (this.output[i] > biggest) {
+
                 biggest = this.output[i];
                 win = i;
+
             }
 
-            if( this.output[i] <0 ) {
-                this.output[i]=0;
+            if( this.output[i] < 0 ) {
+
+                this.output[i] = 0;
+
             }
 
-            if( this.output[i]>1 ) {
-                this.output[i]=1;
+            if( this.output[i] > 1 ) {
+
+                this.output[i] = 1;
+
             }
+
         }
 
         return win;
