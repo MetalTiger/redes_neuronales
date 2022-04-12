@@ -38,7 +38,7 @@ public class XOR {
         network.reset(); // Inicializa los pesos
 
         // train the neural network
-        final Train train = new Backpropagation(network, XOR_INPUT, XOR_IDEAL, 0.8, 0.3);
+        final Train train = new Backpropagation(network, XOR_INPUT, XOR_IDEAL, 0.3, 0.7);
 
         /*
         double[][] weightDataI = {
