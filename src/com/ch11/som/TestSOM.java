@@ -44,7 +44,7 @@ public class TestSOM extends JFrame implements Runnable {
     /**
      * How many random samples to generate.
      */
-    public static final int SAMPLE_COUNT = 100;
+    public static final int SAMPLE_COUNT = 5000;
 
     /**
      * Startup the program.
@@ -217,14 +217,17 @@ public class TestSOM extends JFrame implements Runnable {
 
         }
 
+        System.out.println("Training set (Matriz) de: " + input.length + " x " + input[0].length);
+
         // build and train the neural network
         this.net = new SelfOrganizingMap(INPUT_COUNT, OUTPUT_COUNT, NormalizationType.MULTIPLICATIVE);
 
         final TrainSelfOrganizingMap train = new TrainSelfOrganizingMap(
-                this.net, this.input,LearningMethod.SUBTRACTIVE,0.5
+                this.net, this.input, LearningMethod.SUBTRACTIVE,0.5
         );
 
         train.initialize();
+
         double lastError = Double.MAX_VALUE;
         int errorCount = 0;
 
@@ -232,6 +235,7 @@ public class TestSOM extends JFrame implements Runnable {
 
             train.iteration();
             this.retry++;
+            System.out.println("Epoca " + retry);
             this.totalError = train.getTotalError();
             this.bestError = train.getBestError();
             paint(getGraphics());
@@ -246,6 +250,26 @@ public class TestSOM extends JFrame implements Runnable {
                 errorCount++;
 
             }
+
+        }
+
+        System.out.println("*Weights*");
+        Matrix pesos = this.net.getOutputWeights();
+
+        System.out.println("Matriz de " + pesos.getRows() + " x " + pesos.getCols());
+
+
+        for (int i = 0; i < pesos.getRows(); i++){
+
+            System.out.print("Pesos de neurona #" + i + ": ");
+
+            for (int j = 0; j < pesos.getCols(); j++){
+
+                System.out.print(pesos.get(i, j) + ", ");
+
+            }
+
+            System.out.println();
 
         }
 

@@ -132,8 +132,9 @@ public class TrainSelfOrganizingMap {
 
         this.won = new int[this.outputNeuronCount];
 
-        this.correc = new Matrix(this.outputNeuronCount, this.inputNeuronCount + 1);
+        this.correc = new Matrix(this.outputNeuronCount, this.inputNeuronCount + 1); // + 1 porque almacena la entrada sintética
 
+        // Si se usa el método aditivo como ajuste de pesos entonces se crea una matriz de trabajo
         if (this.learnMethod == LearningMethod.ADDITIVE) {
 
             this.work = new Matrix(1, this.inputNeuronCount + 1);
@@ -144,28 +145,31 @@ public class TrainSelfOrganizingMap {
 
         }
 
-        initialize();
+        initialize(); // Se inicializan los pesos de forma random
+
         this.bestError = Double.MAX_VALUE;
     }
 
     /**
      * Adjust the weights and allow the network to learn.
+     * Applies the correction matrix to the actual weight matrix
      */
     protected void adjustWeights() {
 
         for (int i = 0; i < this.outputNeuronCount; i++) {
 
+            // Si esta neurona no ha ganado entonces no ajustes sus pesos
             if (this.won[i] == 0) {
 
                 continue;
 
             }
 
-            double f = 1.0 / this.won[i];
+            double f = 1.0 / this.won[i]; // Se calcula el número recíproco de las veces que esta neurona ha ganado
 
             if (this.learnMethod == LearningMethod.SUBTRACTIVE) {
 
-                f *= this.learnRate;
+                f *= this.learnRate; // f se escala por la taza de aprendizaje
 
             }
 
@@ -173,8 +177,8 @@ public class TrainSelfOrganizingMap {
 
             for (int j = 0; j <= this.inputNeuronCount; j++) {
 
-                final double corr = f * this.correc.get(i, j);
-                this.som.getOutputWeights().add(i, j, corr);
+                final double corr = f * this.correc.get(i, j);  // Correción a aplicar
+                this.som.getOutputWeights().add(i, j, corr);    // Se suma la correción a los pesos
                 length += corr * corr;
 
             }
@@ -199,7 +203,7 @@ public class TrainSelfOrganizingMap {
      */
     public void evaluateErrors() {
 
-        this.correc.clear();
+        this.correc.clear(); // Limpia la matriz de correcciones
 
         for (int i = 0; i < this.won.length; i++) {
 
@@ -214,46 +218,52 @@ public class TrainSelfOrganizingMap {
 
             final NormalizeInput input = new NormalizeInput(this.train[tset], this.som.getNormalizationType());
 
-            final int best = this.som.winner(input);
+            final int best = this.som.winner(input); // Neurona ganadora (Índice)
 
             this.won[best]++;
-            final Matrix wptr = this.som.getOutputWeights().getRow(best);
+
+            final Matrix wptr = this.som.getOutputWeights().getRow(best); // Pesos de la neurona ganadora
 
             double length = 0.0;
             double diff;
 
+            // Se recorre el training set que corresponde a cada neurona de entrada
             for (int i = 0; i < this.inputNeuronCount; i++) {
 
-                diff = this.train[tset][i] * input.getNormfac() - wptr.get(0, i);
+                diff = this.train[tset][i] * input.getNormfac() - wptr.get(0, i); // Diferencia del training set con los pesos de la neurona ganadora
 
-                length += diff * diff;
+                length += diff * diff;  // Magnitud (suma de cuadrados)
 
                 if (this.learnMethod == LearningMethod.SUBTRACTIVE) {
 
-                    this.correc.add(best, i, diff);
+                    this.correc.add(best, i, diff); // Se corrigen los pesos añadiendo la diferencia
 
                 } else {
-
-                    this.work.set(0, i, this.learnRate * this.train[tset][i] * input.getNormfac() + wptr.get(0, i));
+                    // Se usa una matriz de trabajo que contiene los valores a añadirse
+                    this.work.set(0, i,
+                            this.learnRate * this.train[tset][i] * input.getNormfac() + wptr.get(0, i)
+                    ); // El set de entrenamiento es multiplicado por la taza de aprendizaje y se le suma el mejor peso correspondiente
 
                 }
 
             }
 
-            diff = input.getSynth() - wptr.get(0, this.inputNeuronCount);
+            diff = input.getSynth() - wptr.get(0, this.inputNeuronCount); // Se aplica la entrada sintética al peso de la mejor neurona
             length += diff * diff;
 
-            if (this.learnMethod ==LearningMethod.SUBTRACTIVE) {
+            if (this.learnMethod == LearningMethod.SUBTRACTIVE) {
 
-                this.correc.add(best, this.inputNeuronCount, diff);
+                this.correc.add(best, this.inputNeuronCount, diff); // Se suma la entrada sintética al peso (Se corrige)
 
             } else {
 
                 this.work.set(0, this.inputNeuronCount,
-                        this.learnRate * input.getSynth() + wptr.get(0, this.inputNeuronCount));
+                        this.learnRate * input.getSynth() + wptr.get(0, this.inputNeuronCount)
+                );  // Se aplica la entrada sintética al mejor peso asi como la taza de aprendizaje
 
             }
 
+            // Si la magnitud actual supera el error entonces este corresponde al mejor error
             if (length > this.globalError) {
 
                 this.globalError = length;
@@ -262,8 +272,10 @@ public class TrainSelfOrganizingMap {
 
             if (this.learnMethod == LearningMethod.ADDITIVE) {
 
+                // Se normalizan los pesos de la matriz de trabajo
                 normalizeWeight(this.work, 0);
 
+                // Se corrige cada peso
                 for (int i = 0; i <= this.inputNeuronCount; i++) {
 
                     this.correc.add(best, i, this.work.get(0, i) - wptr.get(0, i));
@@ -274,6 +286,17 @@ public class TrainSelfOrganizingMap {
 
         }
 
+        System.out.println("*Marcador de neuronas*");
+
+        for (int j = 0; j < this.won.length; j++) {
+
+            System.out.println("Neurona #" + j + ": " + this.won[j]);
+
+        }
+
+        System.out.println();
+
+        // Se calcula el RMS
         this.globalError = Math.sqrt(this.globalError);
     }
 
@@ -286,8 +309,7 @@ public class TrainSelfOrganizingMap {
 
         final Matrix outputWeights = this.som.getOutputWeights();
 
-        // Loop over all training sets.  Find the training set with
-        // the least output.
+        // Loop over all training sets. Find the training set with the least output.
         double dist = Double.MAX_VALUE;
 
         for (int tset = 0; tset < this.train.length; tset++) {
@@ -313,12 +335,14 @@ public class TrainSelfOrganizingMap {
 
         while ((i--) > 0) {
 
+            // Si esta neurona ya ha ganado entonces pasa a la siguiente
             if (this.won[i] != 0) {
 
                 continue;
 
             }
 
+            // Si la neurona es la mejor de todas entonces es elegida
             if (output[i] > dist) {
 
                 dist = output[i];
@@ -328,6 +352,11 @@ public class TrainSelfOrganizingMap {
 
         }
 
+        System.out.println("La neurona forzada a ganar fue la #" + which);
+
+        System.out.println();
+
+        // Se ajustan los pesos de la neurona elegida
         for (int j = 0; j < input.getInputMatrix().getCols(); j++) {
 
             outputWeights.set(which, j, input.getInputMatrix().get(0,j));
@@ -378,6 +407,7 @@ public class TrainSelfOrganizingMap {
 
         this.totalError = this.globalError;
 
+        // Si este es el mejor error entonces almacena los pesos
         if (this.totalError < this.bestError) {
 
             this.bestError = this.totalError;
@@ -396,6 +426,7 @@ public class TrainSelfOrganizingMap {
 
         }
 
+        // Si hay menos ganadores que neuronas de salida y menos ganadores que los set de entrenamiento, se fuerza un ganador
         if ((winners < this.outputNeuronCount) && (winners < this.train.length)) {
 
             forceWin();
@@ -419,7 +450,7 @@ public class TrainSelfOrganizingMap {
      * @param row The row to normalize.
      */
     protected void normalizeWeight(final Matrix matrix, final int row) {
-
+        // Normalización multiplicativa
         double len = MatrixMath.vectorLength(matrix.getRow(row));
         len = Math.max(len, SelfOrganizingMap.VERYSMALL);
 

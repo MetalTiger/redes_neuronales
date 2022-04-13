@@ -111,8 +111,9 @@ public class NormalizeInput {
     protected void calculateFactors(final double[] input) {
 
         final Matrix inputMatrix = Matrix.createColumnMatrix(input);
-        double len = MatrixMath.vectorLength(inputMatrix);
-        len = Math.max(len, SelfOrganizingMap.VERYSMALL);
+        double len = MatrixMath.vectorLength(inputMatrix);  // Se calcula la magnitud
+        len = Math.max(len, SelfOrganizingMap.VERYSMALL);   // Se evalua esta magnitud para ver si no es un valor muy pequeño
+
         final int numInputs = input.length;
 
         if (this.type == NormalizationType.MULTIPLICATIVE) {
@@ -122,11 +123,12 @@ public class NormalizeInput {
 
         } else {
 
-            this.normfac = 1.0 / Math.sqrt(numInputs);
-            final double d = numInputs - Math.pow(len,2);
+            this.normfac = 1.0 / Math.sqrt(numInputs); // f
+            final double d = numInputs - Math.pow(len,2); // n - l^2
+
             if (d > 0.0) {
 
-                this.synth = Math.sqrt(d) * this.normfac;
+                this.synth = Math.sqrt(d) * this.normfac; // f (√ n - l^2)
 
             } else {
 

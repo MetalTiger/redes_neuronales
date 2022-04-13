@@ -128,16 +128,21 @@ public class SelfOrganizingMap implements Serializable {
      * @return The winning neuron.
      */
     public int winner(final NormalizeInput input) {
+
         int win = 0;
 
         double biggest = Double.MIN_VALUE;
+
+        // Se recorren todas las neuronas de salida
         for (int i = 0; i < this.outputNeuronCount; i++) {
 
             final Matrix optr = this.outputWeights.getRow(i);
-            this.output[i] = MatrixMath.dotProduct(input.getInputMatrix(), optr) * input.getNormfac();
 
-            this.output[i] = (this.output[i] + 1.0) / 2.0;
+            this.output[i] = MatrixMath.dotProduct(input.getInputMatrix(), optr) * input.getNormfac();  //Se guarda cada salida
 
+            this.output[i] = (this.output[i] + 1.0) / 2.0;  // Estas salidas se mapean a bipolar
+
+            // Se revisa cual es la mejor neurona
             if (this.output[i] > biggest) {
 
                 biggest = this.output[i];
@@ -145,6 +150,7 @@ public class SelfOrganizingMap implements Serializable {
 
             }
 
+            // Se desmapean las salidas
             if( this.output[i] < 0 ) {
 
                 this.output[i] = 0;
