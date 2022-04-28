@@ -10,6 +10,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.time.Duration;
+import java.time.Instant;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -55,12 +57,12 @@ public class IncrementalApp extends JFrame implements ActionListener, Runnable {
     /**
      * The learning rate.
      */
-    protected final static double RATE = 0.5;
+    protected final static double RATE = 0.7;
 
     /**
      * The learning momentum.
      */
-    protected final static double MOMENTUM = 0.7;
+    protected final static double MOMENTUM = 0.3;
 
     /**
      * The main function, just display the JFrame.
@@ -172,9 +174,7 @@ public class IncrementalApp extends JFrame implements ActionListener, Runnable {
         // Training input label
         c.gridwidth = GridBagConstraints.REMAINDER; // end row
         c.anchor = GridBagConstraints.NORTHWEST;
-        content
-                .add(this.status = new JLabel(
-                        "Click train to begin training..."), c);
+        content.add(this.status = new JLabel("Click train to begin training..."), c);
 
         // adjust size and position
         pack();
@@ -258,7 +258,10 @@ public class IncrementalApp extends JFrame implements ActionListener, Runnable {
         final double[][] xorIdeal = getIdeal();
         int update = 0;
 
-        final Prune prune = new Prune(0.7, 0.5, xorData, xorIdeal, 0.05);
+        final Prune prune = new Prune(RATE, MOMENTUM, xorData, xorIdeal, 0.005, 2);
+
+        Instant inst1 = Instant.now();
+
         prune.startIncremental();
 
         while (!prune.getDone()) {
@@ -269,11 +272,24 @@ public class IncrementalApp extends JFrame implements ActionListener, Runnable {
                         + ",Hidden Neurons:" + prune.getHiddenNeuronCount()
                         + ", Current Error=" + prune.getError());
                 update = 0;
+
             }
+
+/*
+            System.out.println("Cycles:" + prune.getCycles()
+                    + ",Hidden Neurons:" + prune.getHiddenNeuronCount()
+                    + ", Current Error=" + prune.getError());
+*/
+
         }
 
-        this.status
-                .setText("Best network found:" + prune.getHiddenNeuronCount()
+        Instant inst2 = Instant.now();
+
+        Duration tiempo = Duration.between(inst1, inst2);
+
+        System.out.println("El tiempo fue de " + tiempo.getSeconds() + "." + tiempo.getNano() + " segundos.");
+
+        this.status.setText("Best network found:" + prune.getHiddenNeuronCount()
                         + ",error = " + prune.getError());
         this.network = prune.getCurrentNetwork();
         this.btnRun.setEnabled(true);
