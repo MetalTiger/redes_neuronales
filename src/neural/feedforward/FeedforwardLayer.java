@@ -248,8 +248,7 @@ public class FeedforwardLayer implements Serializable {
         final FeedforwardLayer previous = this.getPrevious();
         if (previous != null) {
             if (previous.getMatrix() != null) {
-                previous.setMatrix(MatrixMath.deleteCol(previous.getMatrix(),
-                        neuron));
+                previous.setMatrix(MatrixMath.deleteCol(previous.getMatrix(), neuron));
             }
         }
 
@@ -261,7 +260,7 @@ public class FeedforwardLayer implements Serializable {
      */
     public void reset() {
 
-        if (this.matrix != null){
+        /*if (this.matrix != null){
 
             if (this.isInput()){
 
@@ -283,12 +282,73 @@ public class FeedforwardLayer implements Serializable {
             }
 
 
-        }
+        }*/
 
-        /*if (this.matrix != null) {
+
+        if (this.matrix != null) {
+
+            /*if (this.isInput()){
+
+                System.out.println("-----------------------------");
+                System.out.println("Neuronas de entrada " + this.getNeuronCount());
+                System.out.println("Neuronas ocultas " + this.next.getNeuronCount());
+
+
+                *//*
+                System.out.println("Número de neuronas de entrada: " + getNeuronCount());
+
+                System.out.println("Número de neuronas ocultas: " + this.getNext().getNeuronCount());
+                *//*
+
+                if (this.getNext().getNeuronCount() == 1){
+
+                    this.matrix.set(0,0, -0.07);
+                    this.matrix.set(1,0, 0.22);
+                    this.matrix.set(2,0, -0.46);
+
+                }else if (this.getNext().getNeuronCount() == 2){
+
+                    this.matrix.set(0,0, -0.07);
+                    this.matrix.set(0,1, 0.94);
+
+                    this.matrix.set(1,0, 0.22);
+                    this.matrix.set(1,1, 0.46);
+
+                    this.matrix.set(2,0, -0.46);
+                    this.matrix.set(2,1, 0.1);
+
+
+                }else {
+
+                    this.matrix.ramdomize(-1, 1);
+
+                }
+
+
+            }else{
+
+                if (this.getNeuronCount() == 1){
+
+                    this.matrix.set(0,0, -0.22);
+                    this.matrix.set(1,0, 0.78);
+
+                }else if (this.getNeuronCount() == 2){
+
+                    this.matrix.set(0,0, -0.22);
+                    this.matrix.set(1,0, 0.58);
+                    this.matrix.set(2,0, 0.78);
+
+                }else{
+
+                    this.matrix.ramdomize(-1, 1);
+
+                }
+
+            }*/
+
             this.matrix.ramdomize(-1, 1);
 
-        }*/
+        }
 
     }
 
