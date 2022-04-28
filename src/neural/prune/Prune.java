@@ -48,6 +48,7 @@ public class Prune {
      */
     protected double momentum;
     protected double maxError;
+    protected double maxNeuronCount;
 
     /**
      * The current error.
@@ -59,7 +60,7 @@ public class Prune {
      * the last time the error level was tracked. This is 1000 cycles ago. If no
      * significant drop in error occurs for 1000 cycles, training ends.
      */
-    protected double markErrorRate;
+    protected double markErrorRate; // Si esto no cambia en 10,000 ciclos entonces se agrega una neurona
 
     /**
      * Used with markErrorRate. This is the number of cycles since the error was
@@ -100,12 +101,13 @@ public class Prune {
      */
     public Prune(final double rate, final double momentum,
                  final double[][] train, final double[][] ideal,
-                 final double maxError) {
+                 final double maxError, double maxNeuronCount) {
         this.rate = rate;
         this.momentum = momentum;
         this.train = train;
         this.ideal = ideal;
         this.maxError = maxError;
+        this.maxNeuronCount = maxNeuronCount;
     }
 
     /**
@@ -212,8 +214,7 @@ public class Prune {
      * @return The current number of hidden neurons.
      */
     protected int getHiddenCount() {
-        final Collection<FeedforwardLayer> c = this.currentNetwork
-                .getHiddenLayers();
+        final Collection<FeedforwardLayer> c = this.currentNetwork.getHiddenLayers();
         final Object layers[] = c.toArray();
         return ((FeedforwardLayer) layers[0]).getNeuronCount();
     }
@@ -231,20 +232,35 @@ public class Prune {
      * Internal method that is called at the end of each incremental cycle.
      */
     protected void increment() {
-        boolean doit = false;
+        boolean doit = false; // Sirve para saber si se necesita agragar una neurona
 
         if (this.markErrorRate == 0) {
             this.markErrorRate = this.error;
-            this.sinceMark = 0;
+            this.sinceMark = 1;
         } else {
             this.sinceMark++;
-            if (this.sinceMark > 10000) {
-                if ((this.markErrorRate - this.error) < 0.01) {
+            if (this.sinceMark == 10000) {
+
+                /*if ((this.markErrorRate - this.error) < 0.01) {
                     doit = true;
                 }
-                this.markErrorRate = this.error;
-                this.sinceMark = 0;
+                this.markErrorRate = this.error;*/
+
+                if (this.getHiddenNeuronCount() < this.maxNeuronCount){
+
+                    doit = true;
+
+
+                }else {
+
+                    this.done = true;
+
+                }
+
+                this.sinceMark = 1;
+
             }
+
         }
 
         if (this.error < this.maxError) {
