@@ -12,6 +12,7 @@ import neural.feedforward.FeedforwardNetwork;
 import neural.feedforward.train.Train;
 import neural.feedforward.train.anneal.NeuralSimulatedAnnealing;
 import neural.feedforward.train.backpropagation.Backpropagation;
+import neural.matrix.Matrix;
 import neural.util.ErrorCalculation;
 
 /**
@@ -30,6 +31,7 @@ public class SinWave {
     public final static int NEURONS_HIDDEN_1 = 7;
     public final static int NEURONS_HIDDEN_2 = 0;
     public final static boolean USE_BACKPROP = true;
+    public final static int NUM_PREDECIR = 5; // Número de datos a predecir después
 
     public static void main(final String[] args) {
         final SinWave wave = new SinWave();
@@ -66,21 +68,32 @@ public class SinWave {
         percentFormat.setMinimumFractionDigits(2);
         final double[] input = new double[SinWave.INPUT_SIZE];
         final double[] output = new double[SinWave.OUTPUT_SIZE];
-        int tamActual = SinWave.ACTUAL_SIZE;
+        int tamActual = SinWave.ACTUAL_SIZE; // 757
+        int tamFinal = tamActual + NUM_PREDECIR; //761
+        int flag = tamActual - 1; // Bandera usada para incrementar el valor de tamActual dentro del ciclo
+        int valorFuturo = flag + 1; // 757
 
         List<Double> actuales = new ArrayList<>();
         List<Double> predichos = new ArrayList<>();
 
         for (int i = SinWave.INPUT_SIZE; i < tamActual; i++) {
 
-            if (i > 756) {
+            if (i > flag) {
 
-                switch (i) {
+                /*switch (i) {
 
                     case 757 -> this.actual.setActual(757, predichos.get(751));
                     case 758 -> this.actual.setActual(758, predichos.get(752));
                     case 759 -> this.actual.setActual(759, predichos.get(753));
                     case 760 -> this.actual.setActual(760, predichos.get(754));
+
+                }*/
+
+                if (i == valorFuturo){
+
+                    this.actual.setActual(valorFuturo, predichos.get(valorFuturo - 6));
+
+                    valorFuturo++;
 
                 }
 
@@ -90,8 +103,10 @@ public class SinWave {
             this.actual.getOutputData(i - SinWave.INPUT_SIZE, output);
 
             final StringBuilder str = new StringBuilder();
+            /*
             str.append(i);
             str.append(":"); // Actual
+            */
             for (int j = 0; j < output.length; j++) {
                 if (j > 0) {
                     str.append(',');
@@ -114,26 +129,26 @@ public class SinWave {
 
             }
 
-            str.append(":"); // Error
+            //str.append(":"); // Error
 
             final ErrorCalculation error = new ErrorCalculation();
             error.updateError(predict, output);
-            str.append(error.calculateRMS());
+            //str.append(error.calculateRMS());
 
             System.out.println(str.toString());
 
-            if (i == 756){
-                tamActual += 4;
+            if (i == flag){
+                tamActual += SinWave.NUM_PREDECIR;
             }
 
 
         }
 
-        for (double actual: actuales) {
+        /*for (double actual: actuales) {
 
             System.out.println(actual);
 
-        }
+        }*/
 
 
     }
@@ -160,7 +175,7 @@ public class SinWave {
     }
 
     private void generateActual() {
-        this.actual = new ActualData(SinWave.ACTUAL_SIZE, SinWave.INPUT_SIZE, SinWave.OUTPUT_SIZE);
+        this.actual = new ActualData(SinWave.ACTUAL_SIZE, SinWave.INPUT_SIZE, SinWave.OUTPUT_SIZE, SinWave.NUM_PREDECIR);
     }
 
     private void generateTrainingSets() {
@@ -212,6 +227,32 @@ public class SinWave {
             train.iteration();
             System.out.println("Iteration #" + epoch + " Error:" + train.getError());
             epoch++;
-        } while ((epoch < 2000) && (train.getError() > 0.0001));
+        } while ((epoch < 10000) &&(train.getError() > 0.0001)); //
+
+        for (int x = 0; x < train.getNetwork().getLayers().size(); x++){
+
+            Matrix a = train.getNetwork().getLayers().get(x).getMatrix();
+
+            if (a != null){
+
+                //System.out.println("Matriz de " + a.getRows() + " x " + a.getCols());
+
+                for (int i = 0; i < a.getRows(); i++) {
+
+                    for (int j = 0;  j< a.getCols(); j++) {
+
+                        System.out.print(a.get(i, j) + ", ");
+
+                    }
+
+                    System.out.println();
+
+                }
+
+            }
+
+        }
+
+
     }
 }

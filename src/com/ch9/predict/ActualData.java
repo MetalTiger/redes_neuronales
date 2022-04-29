@@ -29,15 +29,15 @@ public class ActualData {
 
     private final int outputSize;
 
-    public ActualData(final int size, final int inputSize, final int outputSize) {
-        this.actual = new double[size + 4];
+    public ActualData(final int size, final int inputSize, final int outputSize, final int aPredecir) {
+        this.actual = new double[size + aPredecir];
         this.inputSize = inputSize;
         this.outputSize = outputSize;
 
         List<Double> lista = new ArrayList<>();
 
         try {
-            File myObj = new File("/home/kevin_cb/Documentos/Datos");
+            File myObj = new File("/home/kevin_cb/Documentos/DatosClima");
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
