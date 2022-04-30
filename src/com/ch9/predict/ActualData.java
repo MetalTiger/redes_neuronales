@@ -37,7 +37,7 @@ public class ActualData {
         List<Double> lista = new ArrayList<>();
 
         try {
-            File myObj = new File("/home/kevin_cb/Documentos/DatosClima");
+            File myObj = new File("/home/kevin_cb/Documentos/DatosMortandad");
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
                 String data = myReader.nextLine();
@@ -50,7 +50,7 @@ public class ActualData {
         }
 
         for (int i = 0; i < lista.size(); i++){
-            this.actual[i] = lista.get(i) / 100;
+            this.actual[i] = lista.get(i) / 10000;
         }
 
         /*int angle = 0;
