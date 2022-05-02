@@ -389,9 +389,39 @@ public class TrainSelfOrganizingMap {
 
         this.som.getOutputWeights().ramdomize(-1, 1);
 
+        System.out.println("Pesos generados de forma random");
+
+        for (int i = 0; i < this.som.getOutputWeights().getRows(); i++){
+
+            for (int j = 0; j < this.som.getOutputWeights().getCols(); j++){
+
+
+                System.out.print(this.som.getOutputWeights().get(i, j) + ", ");
+
+            }
+
+            System.out.println();
+
+        }
+
         for (int i = 0; i < this.outputNeuronCount; i++) {
 
             normalizeWeight(this.som.getOutputWeights(), i);
+
+        }
+
+        System.out.println("Pesos normalizados");
+
+        for (int i = 0; i < this.som.getOutputWeights().getRows(); i++){
+
+            for (int j = 0; j < this.som.getOutputWeights().getCols(); j++){
+
+
+                System.out.print(this.som.getOutputWeights().get(i, j) + ", ");
+
+            }
+
+            System.out.println();
 
         }
 

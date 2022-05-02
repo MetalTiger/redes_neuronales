@@ -150,6 +150,16 @@ public class TestSOM extends JFrame implements Runnable {
 
         for (int y = 0; y < outputWeights.getRows(); y++) {
 
+            /*// Mostrar pesos directamente
+            System.out.println("Pesos Neurona " + y);
+            System.out.println("Peso I1 " + outputWeights.get(y, 0));
+            System.out.println("Peso I2 " + outputWeights.get(y, 1));
+
+            System.out.println("Posicion I1 " + (outputWeights.get(y, 0) * this.unitLength));
+            System.out.println("Posicion I2 " + (outputWeights.get(y, 1) * this.unitLength));
+            */
+
+
             g.fillRect(
                     (int) (outputWeights.get(y, 0) * this.unitLength),
                     (int) (outputWeights.get(y, 1) * this.unitLength),
@@ -157,6 +167,22 @@ public class TestSOM extends JFrame implements Runnable {
                     10
 
             );
+
+            g.setColor(Color.MAGENTA);
+
+            g.drawString("#" + y,
+                    (int) (outputWeights.get(y, 0) * this.unitLength) - 18,
+                    (int) (outputWeights.get(y, 1) * this.unitLength) + 10
+            );
+
+            /*//Mostrar posición de la neurona en base a sus pesos
+            g.drawString((outputWeights.get(y, 0) * this.unitLength) + ", " + (outputWeights.get(y, 1) * this.unitLength),
+                    (int) (outputWeights.get(y, 0) * this.unitLength) - 18,
+                    (int) (outputWeights.get(y, 1) * this.unitLength) + 20
+            );
+            */
+
+            g.setColor(Color.white);
 
         }
 
@@ -172,6 +198,19 @@ public class TestSOM extends JFrame implements Runnable {
                 d[1] = y;
 
                 final int c = this.net.winner(d);
+
+                if (c == 0 || c == 1){
+
+                    g.setColor(Color.white);
+
+                    g.drawString(x + "," + y,
+                            x,
+                            y + 10
+                    );
+
+                }
+
+                g.setColor(Color.green);
 
                 final int x2 = (int) (outputWeights.get(c, 0) * this.unitLength);
                 final int y2 = (int) (outputWeights.get(c, 1) * this.unitLength);
@@ -265,7 +304,15 @@ public class TestSOM extends JFrame implements Runnable {
 
             for (int j = 0; j < pesos.getCols(); j++){
 
-                System.out.print(pesos.get(i, j) + ", ");
+                if (j == 0){
+
+                    System.out.print(pesos.get(i, j) + "(x= " + (pesos.get(i, j) * this.unitLength) + ")" + ", ");
+
+                }else{
+
+                    System.out.print(pesos.get(i, j) + "(y= " + (pesos.get(i, j) * this.unitLength) + ")" + ", ");
+
+                }
 
             }
 
