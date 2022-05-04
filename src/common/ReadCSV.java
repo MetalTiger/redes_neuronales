@@ -26,11 +26,17 @@ public class ReadCSV {
     }
 
     public static Date parseDate(final String when) {
+
         try {
+
             return sdf.parse(when);
+
         } catch (final ParseException e) {
+
             return null;
+
         }
+
     }
 
     private final BufferedReader reader;

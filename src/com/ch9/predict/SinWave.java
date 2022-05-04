@@ -80,15 +80,6 @@ public class SinWave {
 
             if (i > flag) {
 
-                /*switch (i) {
-
-                    case 757 -> this.actual.setActual(757, predichos.get(751));
-                    case 758 -> this.actual.setActual(758, predichos.get(752));
-                    case 759 -> this.actual.setActual(759, predichos.get(753));
-                    case 760 -> this.actual.setActual(760, predichos.get(754));
-
-                }*/
-
                 if (i == valorFuturo){
 
                     this.actual.setActual(valorFuturo, predichos.get(valorFuturo - 6));

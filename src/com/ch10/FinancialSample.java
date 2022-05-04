@@ -87,9 +87,11 @@ public class FinancialSample implements Comparable<FinancialSample> {
 
     @Override
     public String toString() {
+
         final NumberFormat nf = NumberFormat.getPercentInstance();
         nf.setMinimumFractionDigits(2);
         nf.setMaximumFractionDigits(2);
+
         final StringBuilder result = new StringBuilder();
         result.append(ReadCSV.displayDate(this.date));
         result.append(", Amount: ");
@@ -98,6 +100,7 @@ public class FinancialSample implements Comparable<FinancialSample> {
         result.append(this.rate);
         result.append(", Percent from Previous: ");
         result.append(nf.format(this.percent));
+
         return result.toString();
     }
 

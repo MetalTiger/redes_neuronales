@@ -36,20 +36,22 @@ public class PredictSP500 {
     public final static int NEURONS_HIDDEN_1 = 20;
     public final static int NEURONS_HIDDEN_2 = 0;
     public final static double MAX_ERROR = 0.02;
-    public final static Date PREDICT_FROM = ReadCSV.parseDate("2007-01-01");
-    public final static Date LEARN_FROM = ReadCSV.parseDate("1980-01-01");
+    public final static Date PREDICT_FROM = ReadCSV.parseDate("2022-01-01"); // Empieza a predecir desde aqui
+    //public final static Date PREDICT_FROM = ReadCSV.parseDate("2022-01-01");
+    public final static Date LEARN_FROM = ReadCSV.parseDate("1980-01-01");  // Fecha hasta donde terminará de aprender
+    //public final static Date LEARN_FROM = ReadCSV.parseDate("2014-01-19");
 
     public static void main(final String[] args) {
 
         final PredictSP500 predict = new PredictSP500();
 
-        boolean full = false;
+        boolean full = true;
 
-        if (full){
+        if (full) {
 
             predict.run(true);
 
-        }else{
+        } else {
 
             predict.run(false);
 
@@ -76,10 +78,15 @@ public class PredictSP500 {
 
     public void createNetwork() {
 
+        /*
+        * -Le presenta a la red el cambio porcentual entre dos dias, asi hasta obtener 10 cambios porcentuales
+        * -De la ultima fecha presenta el porcentaje
+        * */
+
         final ActivationFunction threshold = new ActivationTANH();
 
         this.network = new FeedforwardNetwork();
-        this.network.addLayer(new FeedforwardLayer(threshold,PredictSP500.INPUT_SIZE * 2));
+        this.network.addLayer(new FeedforwardLayer(threshold,PredictSP500.INPUT_SIZE * 2)); // 20 entradas, el onceavo es
         this.network.addLayer(new FeedforwardLayer(threshold, PredictSP500.NEURONS_HIDDEN_1));
 
         if (PredictSP500.NEURONS_HIDDEN_2 > 0) {
@@ -94,6 +101,14 @@ public class PredictSP500 {
 
     public void display() {
 
+        /*
+        * -Presenta los cambios porcentuales
+        * -Se obtiene la nueva tasa dependiendo del dia, de forma que en el onceavo presenta
+        * ++Tarea++
+        * -Predecir el valor de cierre en los siguientes 5 días y buscar que la red sea precisa (Mover el error/entradas/ocultas)
+        * -Mostrar el stock, se pued ehacer mediante regla de 3.
+        * */
+
         final NumberFormat percentFormat = NumberFormat.getPercentInstance();
         percentFormat.setMinimumFractionDigits(2);
 
@@ -104,29 +119,37 @@ public class PredictSP500 {
         int index = 0;
         for (final FinancialSample sample : this.actual.getSamples()) {
 
+
             if (sample.getDate().after(PredictSP500.PREDICT_FROM)) {
 
+
                 final StringBuilder str = new StringBuilder();
-                str.append(ReadCSV.displayDate(sample.getDate()));
-                str.append(":Start=");
+                //str.append(ReadCSV.displayDate(sample.getDate()));
+                //str.append(":Start=");
                 str.append(sample.getAmount());
 
                 this.actual.getInputData(index - INPUT_SIZE, present);
                 this.actual.getOutputData(index - INPUT_SIZE, actualOutput);
 
                 predict = this.network.computeOutputs(present);
+/*
                 str.append(",Actual % Change=");
                 str.append(percentFormat.format(actualOutput[0]));
                 str.append(",Predicted % Change= ");
                 str.append(percentFormat.format(predict[0]));
+*/
+
+                double stock = sample.getAmount() + (sample.getAmount() * predict[0]);
+
+                //str.append(":Stock Predicho = ");
+                str.append(":");
+                str.append(stock);
 
                 str.append(":Difference=");
 
                 final ErrorCalculation error = new ErrorCalculation();
                 error.updateError(predict, actualOutput);
                 str.append(percentFormat.format(error.calculateRMS()));
-
-                //
 
                 System.out.println(str.toString());
 
@@ -189,7 +212,8 @@ public class PredictSP500 {
         try {
 
             this.actual = new SP500Actual(INPUT_SIZE, OUTPUT_SIZE);
-            this.actual.load("/home/kevin_cb/RedNeuronalArtificial/SP500.csv", "/home/kevin_cb/RedNeuronalArtificial/prime.csv");
+            this.actual.load("/home/kevin_cb/RedNeuronalArtificial/SP500_2.csv", "/home/kevin_cb/RedNeuronalArtificial/prime-rate-history.csv"); // S&P 500
+            //this.actual.load("/home/kevin_cb/RedNeuronalArtificial/BTC-USD.csv", "/home/kevin_cb/RedNeuronalArtificial/prime-rate-history.csv"); // BTC
 
             System.out.println("Samples read: " + this.actual.size());
 
@@ -209,6 +233,8 @@ public class PredictSP500 {
             }
 
             display();
+
+
 
 
         } catch (final Exception e) {

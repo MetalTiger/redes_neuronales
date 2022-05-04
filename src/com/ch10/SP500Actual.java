@@ -44,8 +44,7 @@ public class SP500Actual {
         final Object[] samplesArray = this.samples.toArray();
         // get SP500 & prime data
         for (int i = 0; i < this.inputSize; i++) {
-            final FinancialSample sample = (FinancialSample) samplesArray[offset
-                    + i];
+            final FinancialSample sample = (FinancialSample) samplesArray[offset + i];
             input[i] = sample.getPercent();
             input[i + this.outputSize] = sample.getRate();
         }
@@ -89,8 +88,7 @@ public class SP500Actual {
         calculatePercents();
     }
 
-    public void loadPrime(final String primeFilename) throws IOException,
-            ParseException {
+    public void loadPrime(final String primeFilename) throws IOException, ParseException {
         final ReadCSV csv = new ReadCSV(primeFilename);
 
         while (csv.next()) {
