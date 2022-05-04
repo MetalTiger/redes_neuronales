@@ -2,7 +2,9 @@ package com.ch10;
 
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import common.ReadCSV;
 import neural.activation.ActivationFunction;
@@ -36,6 +38,7 @@ public class PredictSP500 {
     public final static int NEURONS_HIDDEN_1 = 20;
     public final static int NEURONS_HIDDEN_2 = 0;
     public final static double MAX_ERROR = 0.02;
+    public final static double NUM_PREDECIR = 5;
     public final static Date PREDICT_FROM = ReadCSV.parseDate("2022-01-01"); // Empieza a predecir desde aqui
     //public final static Date PREDICT_FROM = ReadCSV.parseDate("2022-01-01");
     public final static Date LEARN_FROM = ReadCSV.parseDate("1980-01-01");  // Fecha hasta donde terminará de aprender
@@ -45,7 +48,7 @@ public class PredictSP500 {
 
         final PredictSP500 predict = new PredictSP500();
 
-        boolean full = true;
+        boolean full = false;
 
         if (full) {
 
@@ -116,15 +119,19 @@ public class PredictSP500 {
         double[] predict = new double[OUTPUT_SIZE];
         final double[] actualOutput = new double[OUTPUT_SIZE];
 
+        List<Double> stocksPredecidos = new ArrayList<>();
+
+        double lastPercent = 0;
+        double lastStock = 0;
+
         int index = 0;
         for (final FinancialSample sample : this.actual.getSamples()) {
 
-
             if (sample.getDate().after(PredictSP500.PREDICT_FROM)) {
-
 
                 final StringBuilder str = new StringBuilder();
                 //str.append(ReadCSV.displayDate(sample.getDate()));
+                //str.append(index).append(":"); // Mostrar índice
                 //str.append(":Start=");
                 str.append(sample.getAmount());
 
@@ -132,30 +139,74 @@ public class PredictSP500 {
                 this.actual.getOutputData(index - INPUT_SIZE, actualOutput);
 
                 predict = this.network.computeOutputs(present);
-/*
+
+                /*
                 str.append(",Actual % Change=");
                 str.append(percentFormat.format(actualOutput[0]));
                 str.append(",Predicted % Change= ");
                 str.append(percentFormat.format(predict[0]));
-*/
+                */
 
-                double stock = sample.getAmount() + (sample.getAmount() * predict[0]);
+                lastPercent = predict[0];   // Se obtiene el ultimo porcentaje
+
+                lastStock = sample.getAmount() + (sample.getAmount() * lastPercent);    // Se obtiene el ultimo stock
+
+                stocksPredecidos.add(lastStock);
 
                 //str.append(":Stock Predicho = ");
                 str.append(":");
-                str.append(stock);
+                str.append(lastStock);
 
+                /*
                 str.append(":Difference=");
 
                 final ErrorCalculation error = new ErrorCalculation();
                 error.updateError(predict, actualOutput);
                 str.append(percentFormat.format(error.calculateRMS()));
+                */
 
                 System.out.println(str.toString());
 
             }
 
             index++;
+
+        }
+
+        FinancialSample sample = new FinancialSample(); // Se crea un objeto que contendrá la última muestra
+        sample.setDate(new Date());
+        sample.setAmount(lastStock);
+        sample.setPercent(lastPercent);
+        //sample.setRate();
+
+        this.actual.getSamples().add(sample);   // Se añade la ultima muestra al arreglo actual
+
+        int tamPredecidos = stocksPredecidos.size() - 1; // Se obtiene el indice del ultimo stock añadido
+
+        for (int i = 0; i < NUM_PREDECIR; i++){
+
+            this.actual.getInputData(index - INPUT_SIZE, present);
+            this.actual.getOutputData(index - INPUT_SIZE, actualOutput);
+
+            predict = this.network.computeOutputs(present);
+
+            double stock = stocksPredecidos.get(tamPredecidos + i) +
+                    stocksPredecidos.get(tamPredecidos + i) * predict[0]; // Se el stock a partir del ultimo sotck añadido y la fórmula
+
+            stocksPredecidos.add(stock);
+
+            FinancialSample muestra = (FinancialSample) this.actual.getSamples().toArray()[index]; // Se obtiene la ultima muestra
+
+            System.out.println(muestra.getAmount() + ":" + stock); // Se imprime la ultima muestra y su predicción
+
+            FinancialSample extraSample = new FinancialSample(); // Se crea un objeto que contendrá la ultima muestra obtenida
+            extraSample.setDate(new Date());
+            extraSample.setAmount(stock);
+            extraSample.setPercent(predict[0]);
+
+            this.actual.getSamples().add(extraSample); // Se añade la muestra nueva al arreglo actual
+
+            index++;    // Se incrementa el índice de la lista de los actuales
 
         }
 

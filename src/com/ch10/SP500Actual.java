@@ -101,18 +101,23 @@ public class SP500Actual {
         csv.close();
     }
 
-    public void loadSP500(final String sp500Filename) throws IOException,
-            ParseException {
+    public void loadSP500(final String sp500Filename) throws IOException, ParseException {
+
         final ReadCSV csv = new ReadCSV(sp500Filename);
         while (csv.next()) {
+
             final Date date = csv.getDate("date");
             final double amount = csv.getDouble("adj close");
+
             final FinancialSample sample = new FinancialSample();
             sample.setAmount(amount);
             sample.setDate(date);
             this.samples.add(sample);
+
         }
+
         csv.close();
+
     }
 
     public int size() {
