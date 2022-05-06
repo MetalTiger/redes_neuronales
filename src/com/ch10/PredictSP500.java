@@ -2,9 +2,8 @@ package com.ch10;
 
 import java.io.IOException;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 import common.ReadCSV;
 import neural.activation.ActivationFunction;
@@ -140,12 +139,12 @@ public class PredictSP500 {
 
                 predict = this.network.computeOutputs(present);
 
-                /*
+/*
                 str.append(",Actual % Change=");
                 str.append(percentFormat.format(actualOutput[0]));
+*/
                 str.append(",Predicted % Change= ");
                 str.append(percentFormat.format(predict[0]));
-                */
 
                 lastPercent = predict[0];   // Se obtiene el ultimo porcentaje
 
@@ -157,13 +156,13 @@ public class PredictSP500 {
                 str.append(":");
                 str.append(lastStock);
 
-                /*
+/*
                 str.append(":Difference=");
 
                 final ErrorCalculation error = new ErrorCalculation();
                 error.updateError(predict, actualOutput);
-                str.append(percentFormat.format(error.calculateRMS()));
-                */
+                str.append(percentFormat.format(error.calculateMSE()));
+*/
 
                 System.out.println(str.toString());
 
@@ -173,8 +172,10 @@ public class PredictSP500 {
 
         }
 
+        GregorianCalendar gregorianCalendar = new GregorianCalendar(2022, Calendar.MAY, 4); // Se crea una fecha comenzando en el 4 de mayo
+
         FinancialSample sample = new FinancialSample(); // Se crea un objeto que contendrá la última muestra
-        sample.setDate(new Date());
+        sample.setDate(gregorianCalendar.getTime());
         sample.setAmount(lastStock);
         sample.setPercent(lastPercent);
         //sample.setRate();
@@ -183,7 +184,9 @@ public class PredictSP500 {
 
         int tamPredecidos = stocksPredecidos.size() - 1; // Se obtiene el indice del ultimo stock añadido
 
-        for (int i = 0; i < NUM_PREDECIR; i++){
+        System.out.println("Últimos 5");
+
+        for (int i = 0; i < NUM_PREDECIR; i++) {
 
             this.actual.getInputData(index - INPUT_SIZE, present);
             this.actual.getOutputData(index - INPUT_SIZE, actualOutput);
@@ -197,10 +200,15 @@ public class PredictSP500 {
 
             FinancialSample muestra = (FinancialSample) this.actual.getSamples().toArray()[index]; // Se obtiene la ultima muestra
 
-            System.out.println(muestra.getAmount() + ":" + stock); // Se imprime la ultima muestra y su predicción
 
+            final ErrorCalculation error = new ErrorCalculation();
+            error.updateError(predict, actualOutput);
+
+            System.out.println(muestra.getAmount() + ":" + stock + ":" + percentFormat.format(muestra.getPercent())); // Se imprime la ultima muestra y su predicción
+
+            gregorianCalendar.set(Calendar.DAY_OF_MONTH, 5 + i); // Se establece el dia en la fecha
             FinancialSample extraSample = new FinancialSample(); // Se crea un objeto que contendrá la ultima muestra obtenida
-            extraSample.setDate(new Date());
+            extraSample.setDate(gregorianCalendar.getTime());
             extraSample.setAmount(stock);
             extraSample.setPercent(predict[0]);
 
@@ -304,7 +312,7 @@ public class PredictSP500 {
     private void trainNetworkBackprop() {
 
         final Train train = new Backpropagation(this.network, this.input,
-                this.ideal, 0.00001, 0.1);
+                this.ideal, 0.0001, 0.1);
         double lastError = Double.MAX_VALUE;
         int epoch = 1;
         int lastAnneal = 0;
@@ -316,9 +324,9 @@ public class PredictSP500 {
 
             System.out.println("Iteration(Backprop) #" + epoch + " Error:" + error);
 
-            if( error>0.05 ) {
+            if( error>0.012 ) {
 
-                if( (lastAnneal > 100) && (error > lastError || Math.abs(error - lastError) < 0.0001) ) {
+                if( (lastAnneal > 400) && (error > lastError || Math.abs(error - lastError) < 0.0001) ) {
 
                     trainNetworkAnneal();
                     lastAnneal = 0;
