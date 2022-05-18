@@ -44,7 +44,7 @@ public class TestSOM extends JFrame implements Runnable {
     /**
      * How many random samples to generate.
      */
-    public static final int SAMPLE_COUNT = 5000;
+    public static final int SAMPLE_COUNT = 50000;
 
     /**
      * Startup the program.
@@ -186,20 +186,103 @@ public class TestSOM extends JFrame implements Runnable {
 
         }
 
-        // plot a grid of samples to test the net with
+        int[][] grupo1 = {
+                {105, 300},
+                {110, 320},
+                {115, 340},
+                {120, 360},
+                {125, 380},
+                {130, 300},
+                {140, 310},
+                {145, 320},
+        };
+
+        int[][] grupo2 = {
+                {180, 200},
+                {190, 205},
+                {200, 210},
+                {210, 215},
+                {215, 220},
+                {220, 225},
+                {230, 230},
+                {240, 240},
+        };
+
+        int[][] grupo3 = {
+                {300, 100},
+                {304, 110},
+                {305, 110},
+                {306, 110},
+                {307, 110},
+                {308, 110},
+                {309, 110},
+                {310, 110},
+        };
+
         g.setColor(Color.green);
-        for (int y = 0; y < this.unitLength; y += 50) {
 
-            for (int x = 0; x < this.unitLength; x += 50) {
+        for (int i = 0; i < grupo1.length; i++) {
 
-                g.fillOval(x, y, 5, 5);
-                final double[] d = new double[2];
-                d[0] = x;
-                d[1] = y;
 
-                final int c = this.net.winner(d);
+            g.fillOval(grupo1[i][0], grupo1[i][1], 5, 5);
+            g.fillOval(grupo2[i][0], grupo2[i][1], 5, 5);
+            g.fillOval(grupo3[i][0], grupo3[i][1], 5, 5);
 
-                if (c == 0 || c == 1){
+            final double[] d = new double[2];
+
+            d[0] = grupo1[i][0];
+            d[1] = grupo1[i][1];
+
+            int c = this.net.winner(d);
+
+            int x2 = (int) (outputWeights.get(c, 0) * this.unitLength);
+            int y2 = (int) (outputWeights.get(c, 1) * this.unitLength);
+
+            g.drawLine(grupo1[i][0], grupo1[i][1], x2, y2);
+
+            //grupo2
+            d[0] = grupo2[i][0];
+            d[1] = grupo2[i][1];
+
+            c = this.net.winner(d);
+
+            x2 = (int) (outputWeights.get(c, 0) * this.unitLength);
+            y2 = (int) (outputWeights.get(c, 1) * this.unitLength);
+
+            g.drawLine(grupo2[i][0], grupo2[i][1], x2, y2);
+
+            //grupo3
+            d[0] = grupo3[i][0];
+            d[1] = grupo3[i][1];
+
+            c = this.net.winner(d);
+
+            x2 = (int) (outputWeights.get(c, 0) * this.unitLength);
+            y2 = (int) (outputWeights.get(c, 1) * this.unitLength);
+
+            g.drawLine(grupo3[i][0], grupo3[i][1], x2, y2);
+
+
+        }
+
+        // plot a grid of samples to test the net with
+        /*g.setColor(Color.green);
+        for (int y = 0; y < this.unitLength; y += 100) {
+
+            for (int x = 0; x < this.unitLength; x += 100) {
+
+                if (y == 100 || y == 200 || y == 300){
+
+                    g.fillOval(x, y, 5, 5);
+                    final double[] d = new double[2];
+                    d[0] = x;
+                    d[1] = y;
+
+                    final int c = this.net.winner(d);
+
+                    //System.out.println("Posiciones X: " + x + ", Y: " + y + " pertenecen a la neurona #" + c);
+
+                    //if (c == 0 || c == 1){
 
                     g.setColor(Color.white);
 
@@ -208,18 +291,20 @@ public class TestSOM extends JFrame implements Runnable {
                             y + 10
                     );
 
+                    //}
+
+                    g.setColor(Color.green);
+
+                    final int x2 = (int) (outputWeights.get(c, 0) * this.unitLength);
+                    final int y2 = (int) (outputWeights.get(c, 1) * this.unitLength);
+
+                    g.drawLine(x, y, x2, y2);
+
                 }
-
-                g.setColor(Color.green);
-
-                final int x2 = (int) (outputWeights.get(c, 0) * this.unitLength);
-                final int y2 = (int) (outputWeights.get(c, 1) * this.unitLength);
-
-                g.drawLine(x, y, x2, y2);
 
             }
 
-        }
+        }*/
 
         // display the status info
         g.setColor(Color.white);
@@ -246,13 +331,16 @@ public class TestSOM extends JFrame implements Runnable {
         // build the training set
         this.input = new double[SAMPLE_COUNT][INPUT_COUNT];
 
+        //System.out.println("Training Set");
         for (int i = 0; i < SAMPLE_COUNT; i++) {
 
             for (int j = 0; j < INPUT_COUNT; j++) {
 
                 this.input[i][j] = Math.random();
+                //System.out.print(this.input[i][j] + ",");
 
             }
+            System.out.println();
 
         }
 
@@ -274,9 +362,10 @@ public class TestSOM extends JFrame implements Runnable {
 
             train.iteration();
             this.retry++;
-            System.out.println("Epoca " + retry);
+            System.out.println("Época " + retry);
             this.totalError = train.getTotalError();
             this.bestError = train.getBestError();
+            System.out.println("Error " + this.bestError);
             paint(getGraphics());
 
             if (this.bestError < lastError) {

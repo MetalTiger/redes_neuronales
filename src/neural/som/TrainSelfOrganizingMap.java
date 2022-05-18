@@ -224,12 +224,21 @@ public class TrainSelfOrganizingMap {
 
             final Matrix wptr = this.som.getOutputWeights().getRow(best); // Pesos de la neurona ganadora
 
+            /*System.out.println("pesos");
+            for (int a = 0; a < wptr.getCols(); a++){
+
+                System.out.print(wptr.get(0, a) + ", ");
+
+            }
+
+            System.out.println();*/
+
             double length = 0.0;
             double diff;
 
             // Se recorre el training set que corresponde a cada neurona de entrada
             for (int i = 0; i < this.inputNeuronCount; i++) {
-
+                //System.out.println("Factor de normalizacion " + input.getNormfac());
                 diff = this.train[tset][i] * input.getNormfac() - wptr.get(0, i); // Diferencia del training set con los pesos de la neurona ganadora
 
                 length += diff * diff;  // Magnitud (suma de cuadrados)
@@ -248,7 +257,8 @@ public class TrainSelfOrganizingMap {
 
             }
 
-            diff = input.getSynth() - wptr.get(0, this.inputNeuronCount); // Se aplica la entrada sintética al peso de la mejor neurona
+            //System.out.println("Entrada sintetica " + input.getSynth() + " - " + wptr.get(0, this.inputNeuronCount));
+            diff = input.getSynth() - wptr.get(0, this.inputNeuronCount); // Se saca la diferencia que hay entre la entrada sintética y el ultimo peso de la mejor neurona
             length += diff * diff;
 
             if (this.learnMethod == LearningMethod.SUBTRACTIVE) {
@@ -259,9 +269,11 @@ public class TrainSelfOrganizingMap {
 
                 this.work.set(0, this.inputNeuronCount,
                         this.learnRate * input.getSynth() + wptr.get(0, this.inputNeuronCount)
-                );  // Se aplica la entrada sintética al mejor peso asi como la taza de aprendizaje
+                );  // Se aplica la entrada sintética al último peso de la mejor neurona asi como la taza de aprendizaje
 
             }
+
+            //System.out.println("Magnitud = " + length + " Error global = " + this.globalError);
 
             // Si la magnitud actual supera el error entonces este corresponde al mejor error
             if (length > this.globalError) {
@@ -356,7 +368,7 @@ public class TrainSelfOrganizingMap {
 
         System.out.println();
 
-        // Se ajustan los pesos de la neurona elegida
+        // Se ajustan los pesos de la neurona elegida tomándose la entrada
         for (int j = 0; j < input.getInputMatrix().getCols(); j++) {
 
             outputWeights.set(which, j, input.getInputMatrix().get(0,j));
