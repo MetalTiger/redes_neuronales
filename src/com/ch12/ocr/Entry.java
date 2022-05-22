@@ -5,9 +5,13 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 import java.awt.image.PixelGrabber;
+import java.io.File;
+import java.io.IOException;
 
-import javax.swing.JPanel;
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 /**
  * Chapter 12: OCR and the Self Organizing Map
@@ -110,8 +114,12 @@ public class Entry extends JPanel {
         final int w = this.entryImage.getWidth(this);
         final int h = this.entryImage.getHeight(this);
 
+        System.out.println("Width " + w);
+        System.out.println("Height " + h);
+
         final PixelGrabber grabber = new PixelGrabber(this.entryImage, 0, 0, w,
                 h, true);
+
         try {
 
             grabber.grabPixels();
@@ -121,24 +129,32 @@ public class Entry extends JPanel {
             // now downsample
             final SampleData data = this.sample.getData();
 
-            this.ratioX = (double) (this.downSampleRight - this.downSampleLeft)
-                    / (double) data.getWidth();
-            this.ratioY = (double) (this.downSampleBottom - this.downSampleTop)
-                    / (double) data.getHeight();
+            this.ratioX = (double) (this.downSampleRight - this.downSampleLeft) / (double) data.getWidth();
+
+            this.ratioY = (double) (this.downSampleBottom - this.downSampleTop) / (double) data.getHeight();
 
             for (int y = 0; y < data.getHeight(); y++) {
+
                 for (int x = 0; x < data.getWidth(); x++) {
+
                     if (downSampleRegion(x, y)) {
+
                         data.setData(x, y, true);
+
                     } else {
+
                         data.setData(x, y, false);
+
                     }
+
                 }
+
             }
 
             this.sample.repaint();
             repaint();
         } catch (final InterruptedException e) {
+
         }
     }
 
@@ -159,13 +175,17 @@ public class Entry extends JPanel {
         final int endY = (int) (startY + this.ratioY);
 
         for (int yy = startY; yy <= endY; yy++) {
+
             for (int xx = startX; xx <= endX; xx++) {
+
                 final int loc = xx + (yy * w);
 
                 if (this.pixelMap[loc] != -1) {
                     return true;
                 }
+
             }
+
         }
 
         return false;
@@ -183,6 +203,7 @@ public class Entry extends JPanel {
     protected void findBounds(final int w, final int h) {
         // top line
         for (int y = 0; y < h; y++) {
+
             if (!hLineClear(y)) {
                 this.downSampleTop = y;
                 break;
@@ -191,25 +212,31 @@ public class Entry extends JPanel {
         }
         // bottom line
         for (int y = h - 1; y >= 0; y--) {
+
             if (!hLineClear(y)) {
                 this.downSampleBottom = y;
                 break;
             }
+
         }
         // left line
         for (int x = 0; x < w; x++) {
+
             if (!vLineClear(x)) {
                 this.downSampleLeft = x;
                 break;
             }
+
         }
 
         // right line
         for (int x = w - 1; x >= 0; x--) {
+
             if (!vLineClear(x)) {
                 this.downSampleRight = x;
                 break;
             }
+
         }
     }
 
@@ -232,10 +259,13 @@ public class Entry extends JPanel {
      */
     protected boolean hLineClear(final int y) {
         final int w = this.entryImage.getWidth(this);
+
         for (int i = 0; i < w; i++) {
+
             if (this.pixelMap[(y * w) + i] != -1) {
                 return false;
             }
+
         }
         return true;
     }
@@ -258,12 +288,16 @@ public class Entry extends JPanel {
      */
     @Override
     public void paint(final Graphics g) {
+
         if (this.entryImage == null) {
             initImage();
         }
+
         g.drawImage(this.entryImage, 0, 0, this);
+
         g.setColor(Color.black);
         g.drawRect(0, 0, getWidth(), getHeight());
+
         g.setColor(Color.red);
         g.drawRect(this.downSampleLeft, this.downSampleTop,
                 this.downSampleRight - this.downSampleLeft,
@@ -279,9 +313,11 @@ public class Entry extends JPanel {
      */
     @Override
     protected void processMouseEvent(final MouseEvent e) {
+
         if (e.getID() != MouseEvent.MOUSE_PRESSED) {
             return;
         }
+
         this.lastX = e.getX();
         this.lastY = e.getY();
     }
@@ -294,6 +330,7 @@ public class Entry extends JPanel {
      */
     @Override
     protected void processMouseMotionEvent(final MouseEvent e) {
+
         if (e.getID() != MouseEvent.MOUSE_DRAGGED) {
             return;
         }
@@ -301,6 +338,7 @@ public class Entry extends JPanel {
         this.entryGraphics.setColor(Color.black);
         this.entryGraphics.drawLine(this.lastX, this.lastY, e.getX(), e.getY());
         getGraphics().drawImage(this.entryImage, 0, 0, this);
+
         this.lastX = e.getX();
         this.lastY = e.getY();
     }
@@ -326,10 +364,13 @@ public class Entry extends JPanel {
     protected boolean vLineClear(final int x) {
         final int w = this.entryImage.getWidth(this);
         final int h = this.entryImage.getHeight(this);
+
         for (int i = 0; i < h; i++) {
+
             if (this.pixelMap[(i * w) + x] != -1) {
                 return false;
             }
+
         }
         return true;
     }

@@ -40,11 +40,17 @@ public class SampleData implements Comparable<SampleData>, Cloneable {
      * Clear the downsampled image
      */
     public void clear() {
+
         for (int x = 0; x < this.grid.length; x++) {
+
             for (int y = 0; y < this.grid[0].length; y++) {
+
                 this.grid[x][y] = false;
+
             }
+
         }
+
     }
 
     /**
@@ -57,13 +63,18 @@ public class SampleData implements Comparable<SampleData>, Cloneable {
 
     {
 
-        final SampleData obj = new SampleData(this.letter, getWidth(),
-                getHeight());
+        final SampleData obj = new SampleData(this.letter, getWidth(), getHeight());
+
         for (int y = 0; y < getHeight(); y++) {
+
             for (int x = 0; x < getWidth(); x++) {
+
                 obj.setData(x, y, getData(x, y));
+
             }
+
         }
+
         return obj;
     }
 
@@ -76,12 +87,19 @@ public class SampleData implements Comparable<SampleData>, Cloneable {
      */
 
     public int compareTo(final SampleData o) {
+
         final SampleData obj = o;
+
         if (this.getLetter() > obj.getLetter()) {
+
             return 1;
+
         } else {
+
             return -1;
+
         }
+
     }
 
     /**

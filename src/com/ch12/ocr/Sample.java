@@ -50,6 +50,7 @@ public class Sample extends JPanel {
      */
     @Override
     public void paint(final Graphics g) {
+
         if (this.data == null) {
             return;
         }
@@ -65,16 +66,23 @@ public class Sample extends JPanel {
         for (y = 0; y < this.data.getHeight(); y++) {
             g.drawLine(0, y * vcell, getWidth(), y * vcell);
         }
+
         for (x = 0; x < this.data.getWidth(); x++) {
             g.drawLine(x * hcell, 0, x * hcell, getHeight());
         }
 
         for (y = 0; y < this.data.getHeight(); y++) {
+
             for (x = 0; x < this.data.getWidth(); x++) {
+
                 if (this.data.getData(x, y)) {
+
                     g.fillRect(x * hcell, y * vcell, hcell, vcell);
+
                 }
+
             }
+
         }
 
         g.setColor(Color.black);
