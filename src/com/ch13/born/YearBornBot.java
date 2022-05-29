@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.ch13.BingWebSearch;
 import com.ch13.Config;
 import com.ch13.ScanReportable;
 import com.ch13.Text;
@@ -39,7 +40,7 @@ public class YearBornBot implements ScanReportable {
 	/*
 	 * The search object to use.
 	 */
-	static YahooSearch search;
+	static BingWebSearch search;
 
 	/**
 	 * The main method processes the command line arguments and then calls
@@ -57,7 +58,7 @@ public class YearBornBot implements ScanReportable {
 			try {
 				final YearBornBot when = new YearBornBot();
 				// when.process(args[0]);
-				when.process("Bill Gates");
+				when.process("Tom Cruise");
 			} catch (final Exception e) {
 				e.printStackTrace();
 			}
@@ -127,16 +128,16 @@ public class YearBornBot implements ScanReportable {
 	 *             Thrown if a communication error occurs.
 	 */
 	public void process(final String name) throws IOException {
-		search = new YahooSearch();
+		search = new BingWebSearch();
 
 		if (YearBornBot.LOG) {
-			System.out.println("Getting search results form Yahoo.");
+			System.out.println("Getting search results form Bing.");
 		}
 		final Collection<URL> c = search.search(name);
 		int i = 0;
 
 		if (YearBornBot.LOG) {
-			System.out.println("Scanning URL's from Yahoo.");
+			System.out.println("Scanning URL's from Bing.");
 		}
 		for (final URL u : c) {
 			try {
