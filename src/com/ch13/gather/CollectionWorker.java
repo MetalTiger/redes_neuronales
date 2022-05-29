@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
+import com.ch13.BingWebSearch;
 import com.ch13.Text;
 import common.YahooSearch;
 
@@ -36,17 +37,17 @@ public class CollectionWorker implements Callable<Integer> {
 	/*
 	 * The search object to use.
 	 */
-	private final YahooSearch search;
+	//private final YahooSearch search;
+	private final BingWebSearch search;
 
 	private final String name;
 	private final int year;
 
-	public CollectionWorker(final GatherForTrain bot, final String name,
-			final int year) {
+	public CollectionWorker(final GatherForTrain bot, final String name, final int year) {
 		this.bot = bot;
 		this.name = name;
 		this.year = year;
-		this.search = new YahooSearch();
+		this.search = new BingWebSearch();
 	}
 
 	public Integer call() throws Exception {
@@ -61,8 +62,10 @@ public class CollectionWorker implements Callable<Integer> {
 		return null;
 	}
 
-	private void scanPerson(final String name, final int year)
-			throws IOException {
+	private void scanPerson(final String name, final int year) throws IOException, InterruptedException {
+
+		Thread.sleep(20000);
+
 		final Collection<URL> c = this.search.search(name);
 		int i = 0;
 

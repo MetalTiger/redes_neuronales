@@ -67,9 +67,12 @@ public class YahooSearch {
         form.add("query", searchFor);
         form.complete();
 
+        System.out.println("Con tostring " + bos.toString());
+
         final URL url = new URL(
                 "http://search.yahooapis.com/WebSearchService/V1/webSearch?"
-                        + bos.toString());
+                        + bos.toString()
+        );
         bos.close();
 
         int tries = 0;

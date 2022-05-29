@@ -85,8 +85,7 @@ public class GatherForTrain implements ScanReportable {
 			final String name = famous.get("Person");
 			final int year = famous.getInt("Year");
 
-			final CollectionWorker worker = new CollectionWorker(this, name,
-					year);
+			final CollectionWorker worker = new CollectionWorker(this, name, year);
 			tasks.add(worker);
 		}
 

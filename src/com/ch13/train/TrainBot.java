@@ -30,7 +30,7 @@ import neural.util.SerializeObject;
  */
 public class TrainBot {
 
-	public static void main(final String args[]) {
+	public static void main(final String[] args) {
 		try {
 			final TrainBot trainBot = new TrainBot();
 			trainBot.process();
@@ -41,8 +41,8 @@ public class TrainBot {
 
 	private int sampleCount;
 	private CommonWords common;
-	private double input[][];
-	private double ideal[][];
+	private double[][] input;
+	private double[][] ideal;
 	private FeedforwardNetwork network;
 	private AnalyzeSentences goodAnalysis;
 	private AnalyzeSentences badAnalysis;
@@ -93,8 +93,7 @@ public class TrainBot {
 		this.histogramBad.buildComplete();
 
 		// remove low scoring words
-		this.histogramGood
-				.removeBelow((int) this.histogramGood.calculateMean());
+		this.histogramGood.removeBelow((int) this.histogramGood.calculateMean());
 		this.histogramBad.removePercent(0.99);
 
 		// remove common words
@@ -102,19 +101,15 @@ public class TrainBot {
 
 		this.histogramGood.trim(Config.INPUT_SIZE);
 
-		this.goodAnalysis = new AnalyzeSentences(this.histogramGood,
-				Config.INPUT_SIZE);
-		this.badAnalysis = new AnalyzeSentences(this.histogramGood,
-				Config.INPUT_SIZE);
+		this.goodAnalysis = new AnalyzeSentences(this.histogramGood, Config.INPUT_SIZE);
+		this.badAnalysis = new AnalyzeSentences(this.histogramGood, Config.INPUT_SIZE);
 
-		this.goodAnalysis.process(this.trainingSet, 0.9,
-				Config.FILENAME_GOOD_TRAINING_TEXT);
-		this.badAnalysis.process(this.trainingSet, 0.1,
-				Config.FILENAME_BAD_TRAINING_TEXT);
+		this.goodAnalysis.process(this.trainingSet, 0.9, Config.FILENAME_GOOD_TRAINING_TEXT);
+		this.badAnalysis.process(this.trainingSet, 0.1, Config.FILENAME_BAD_TRAINING_TEXT);
 
 		this.sampleCount = this.trainingSet.getIdeal().size();
-		System.out
-				.println("Processing " + this.sampleCount + " training sets.");
+
+		System.out.println("Processing " + this.sampleCount + " training sets.");
 
 		allocateTrainingSets();
 
