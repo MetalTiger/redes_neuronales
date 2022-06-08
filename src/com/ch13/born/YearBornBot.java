@@ -51,18 +51,15 @@ public class YearBornBot implements ScanReportable {
 	 * 
 	 */
 	public static void main(final String[] args) {
-		/*
-		 * if (args.length < 1) { System.out.println("YearBornBot [Famous
-		 * Person]"); } else
-		 */{
-			try {
-				final YearBornBot when = new YearBornBot();
-				// when.process(args[0]);
-				when.process("Tom Cruise");
-			} catch (final Exception e) {
-				e.printStackTrace();
-			}
+
+		try {
+			final YearBornBot when = new YearBornBot();
+			// when.process(args[0]);
+			when.process("Cristiano Ronaldo"); //Adolf Hitler, Vladimir Putin, Nelson Mandela, Hugo Chavez
+		} catch (final Exception e) {
+			e.printStackTrace();
 		}
+
 	}
 
 	private final FeedforwardNetwork network;

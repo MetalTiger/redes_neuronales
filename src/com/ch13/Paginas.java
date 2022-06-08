@@ -41,11 +41,7 @@ public class Paginas {
 
     webPages webPages;
 
-
     public Paginas(com.ch13.webPages webPages) {
         this.webPages = webPages;
     }
 }
-
-
-

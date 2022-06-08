@@ -11,7 +11,8 @@ import com.google.gson.JsonParser;
 
 public class BingWebSearch {
 
-    static String subscriptionKey = "002f48f4310c4e16a141c95d1b79ebdc";
+    //f9bae53b874140cc9b8bbf297613c5d8
+    static String subscriptionKey = "f9bae53b874140cc9b8bbf297613c5d8";
 
     /*
      * If you encounter unexpected authorization errors, double-check these values
@@ -21,7 +22,7 @@ public class BingWebSearch {
     static String host = "https://api.bing.microsoft.com";
     static String path = "/v7.0/search";
 
-    public Collection<URL> search(String name){
+    public Collection<URL> search(String name) {
 
         String searchTerm = name;
 
@@ -52,7 +53,6 @@ public class BingWebSearch {
 
             for (value item: prueba.webPages.value) {
 
-
                 urls.add(new URL(item.url));
                 System.out.println(item.getUrl());
 
@@ -79,7 +79,7 @@ public class BingWebSearch {
         // Construct the URL.
         URL url = new URL(host + path
                 + "?q=" +  URLEncoder.encode(searchQuery, "UTF-8")
-                + "&count=40"
+                + "&count=30"
                 + "&responseFilter=webpages"
                 + "&mkt=en-US"
         );

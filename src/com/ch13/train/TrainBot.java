@@ -124,7 +124,7 @@ public class TrainBot {
 
 	private void trainNetworkBackpropBackprop() {
 		final Train train = new Backpropagation(this.network, this.input,
-				this.ideal, 0.5, 0.3);
+				this.ideal, 0.2, 0.5);
 
 		int epoch = 1;
 
