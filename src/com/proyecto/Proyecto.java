@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.io.IOException;
+import java.io.Serial;
 import java.text.NumberFormat;
 
 import javax.swing.JFrame;
@@ -42,13 +43,78 @@ public class Proyecto extends JFrame implements Runnable {
      * @param args
      *            Not used.
      */
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws IOException, ClassNotFoundException {
+
+        boolean entrenar = false;
 
         final Proyecto app = new Proyecto();
         app.setVisible(true);
-        final Thread t = new Thread(app);
-        t.setPriority(Thread.MIN_PRIORITY);
-        t.start();
+
+        if (entrenar){
+
+            final Thread t = new Thread(app);
+            t.setPriority(Thread.MIN_PRIORITY);
+            t.start();
+
+        } else {
+
+            loadNetwork();
+
+            probarDatos();
+
+        }
+
+
+
+    }
+
+    private static void probarDatos() {
+
+        for (int i = 0; i < 5; i++){
+
+            System.out.print("Persona " + i + " Datos: ");
+
+            double[] respuestas = new double[6];
+
+            /*respuestas[0] = 0.7;
+            respuestas[1] = 0.7;
+            respuestas[2] = 0.3;
+            respuestas[3] = 0.3;
+            respuestas[4] = 0.8;
+            respuestas[5] = 0.8;*/
+
+
+            for (int j = 0; j < respuestas.length; j++) {
+                respuestas[j] = Math.random();
+
+                System.out.print(respuestas[j] + ", ");
+            }
+
+            int winnerNeuron = net.winner(respuestas);
+
+            //String mensaje = "A la persona " + i + " se le recomendará el canal de ";
+            String mensaje = "se le recomendará el canal de ";
+
+            switch (winnerNeuron) {
+
+                case 0:
+                    mensaje += "Deportes";
+                    break;
+
+                case 1:
+                    mensaje += "Noticias";
+                    break;
+
+                case 2:
+                    mensaje += "Caricaturas";
+                    break;
+
+            }
+
+            System.out.print(mensaje);
+            System.out.println();
+
+        }
 
     }
 
@@ -76,7 +142,7 @@ public class Proyecto extends JFrame implements Runnable {
      * The neural network.
      */
 
-    protected SelfOrganizingMap net;
+    protected static SelfOrganizingMap net;
     protected double[][] input;
 
     /**
@@ -202,20 +268,18 @@ public class Proyecto extends JFrame implements Runnable {
             switch (winnerNeuron){
 
                 case 0:
-                    mensaje += "Deportes";
+                    mensaje += "0";
                     break;
 
                 case 1:
-                    mensaje += "Noticias";
+                    mensaje += "1";
                     break;
 
                 case 2:
-                    mensaje += "Caricaturas";
+                    mensaje += "2";
                     break;
 
             }
-
-
 
             final int x2 = (int) (outputWeights.get(winnerNeuron, 0) * this.unitLength);
             final int y2 = (int) (outputWeights.get(winnerNeuron, 1) * this.unitLength);
@@ -356,7 +420,7 @@ public class Proyecto extends JFrame implements Runnable {
         System.out.println("Matriz de " + pesos.getRows() + " x " + pesos.getCols());
 
 
-        /*for (int i = 0; i < pesos.getRows(); i++){
+        for (int i = 0; i < pesos.getRows(); i++){
 
             System.out.print("Pesos de neurona #" + i + ": ");
 
@@ -376,14 +440,21 @@ public class Proyecto extends JFrame implements Runnable {
 
             System.out.println();
 
-        }*/
+        }
 
-        /*try {
-            SerializeObject.save("./proyecto.net", this.net);
+        try {
+            SerializeObject.save("./proyecto.net", net);
         } catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
 
+    }
+
+    public static void loadNetwork() throws IOException, ClassNotFoundException {
+
+        SelfOrganizingMap mapa = (SelfOrganizingMap) SerializeObject.load("./proyecto.net");
+
+        net = mapa;
 
     }
 
